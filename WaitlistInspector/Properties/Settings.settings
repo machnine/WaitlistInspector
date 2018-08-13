@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="WindowsFormsApp2.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="waitlistdb" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">\\oxnetfs02\RenalDir\Renal\Departmental\Transplant Immunology\TTSSPD\AIFILES\waitlist.accdb</Value>
+    </Setting>
+    <Setting Name="renaldbf" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">\\32gc322\renal</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
