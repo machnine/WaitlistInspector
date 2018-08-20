@@ -126,7 +126,7 @@
             this.lbStatus.AutoSize = true;
             this.lbStatus.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbStatus.ForeColor = System.Drawing.Color.Coral;
-            this.lbStatus.Location = new System.Drawing.Point(631, 32);
+            this.lbStatus.Location = new System.Drawing.Point(591, 38);
             this.lbStatus.Name = "lbStatus";
             this.lbStatus.Size = new System.Drawing.Size(16, 14);
             this.lbStatus.TabIndex = 3;

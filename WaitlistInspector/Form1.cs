@@ -25,9 +25,15 @@ namespace WaitlistInspector
         private void tbRenalNum_KeyPress(object sender, KeyPressEventArgs e)
         {
             int renalNum;
-            lbStatus.Text = "";
+
             if (e.KeyChar == (char)13)
             {
+                lbStatus.Text = "";
+                lbUktNo.Text = "";
+                lbPtNames.Text = "";
+                tbSpecs.Text = "";
+                tbFurther.Text = "";
+                tbOther.Text = "";
 
                 if (int.TryParse(tbRenalNum.Text, out renalNum) && renalNum > 0 && renalNum <=9999)
                 {                    
@@ -92,11 +98,7 @@ namespace WaitlistInspector
             }
             else
             {
-                lbUktNo.Text = "";
                 lbPtNames.Text = "NOT FOUND";
-                tbSpecs.Text = "";
-                tbOther.Text = "";
-                tbFurther.Text = "";
             }
             if (dt.Rows.Count > 1)
             {
@@ -156,9 +158,20 @@ namespace WaitlistInspector
 
         private void btLogDiff_Click(object sender, EventArgs e)
         {
+            int recordCount;
+
             if (MessageBox.Show("Log the discrepancy?", "Discrepancy", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                logDiscrepancy();
+                if (checkDiscrepancyExist(out recordCount) == true)
+                {                    
+                    if (MessageBox.Show($"{recordCount} previous unarchived records.", 
+                        "Previously logged", MessageBoxButtons.YesNo) == DialogResult.Yes)                    
+                        logDiscrepancy();                    
+                }
+                else
+                {
+                    logDiscrepancy();
+                }
             }
         }
 
@@ -183,22 +196,28 @@ namespace WaitlistInspector
 
             OleDbCommand cmd = new OleDbCommand(queryStr);
             //cmd.Parameters.AddWithValue("@renal_number", renalNumber); //==> DOESN'T WORK
-            
-            cmd.Connection = con;
-            using (con)
+            try
             {
-                con.Open();
-                using (OleDbDataReader dr = cmd.ExecuteReader())
+                cmd.Connection = con;
+                using (con)
                 {
-                    
-                    if (dr.Read())
+                    con.Open();
+                    using (OleDbDataReader dr = cmd.ExecuteReader())
                     {
-                        tbSpecs.Text = dr["specs"].ToString();
-                        tbOther.Text = dr["other"].ToString();
-                        tbFurther.Text = dr["further"].ToString();
-                    }
 
+                        if (dr.Read())
+                        {
+                            tbSpecs.Text = dr["specs"].ToString();
+                            tbOther.Text = dr["other"].ToString();
+                            tbFurther.Text = dr["further"].ToString();
+                        }
+
+                    }
                 }
+            }
+            catch
+            {
+                tbSpecs.Text = "Failed to connect to VFP DB provider, no specs displayed.";
             }
             
         }
@@ -222,13 +241,16 @@ namespace WaitlistInspector
                                        ,AUDIT_DATE
                                        ,ANTIBODY_SPECS
                                        ,OTHER_SPECS
-                                       ,FURTHER_SPECS)
+                                       ,FURTHER_SPECS
+                                       ,ARCHIVED)
                                    VALUES(@ukt_no 
                                          ,@renal_no
                                          ,@audit_date
                                          ,@specs
                                          ,@other
-                                         ,@further)";
+                                         ,@further
+                                         ,'N'
+                                         )";
 
             OleDbCommand cmd = new OleDbCommand(insertQuery);
             cmd.Connection = con;
@@ -243,6 +265,30 @@ namespace WaitlistInspector
                 con.Open();
                 cmd.ExecuteNonQuery();
             }
+        }
+
+        private bool checkDiscrepancyExist(out int Count)
+        {
+            DataTable dt = new DataTable();
+            OleDbConnection con = new OleDbConnection(waitlistConStr);
+            string selectQuery = $@"SELECT * 
+                                    FROM Discrepancy 
+                                    WHERE 
+                                        (RENAL_NO = {int.Parse(tbRenalNum.Text)})
+                                        AND ARCHIVED = 'N'
+                                    ";            
+            using (con)
+            {
+                OleDbDataAdapter da = new OleDbDataAdapter(selectQuery, con);                
+                da.Fill(dt);
+            }
+
+            //Count = dt.Rows.Count;
+
+            if ((Count = dt.Rows.Count) > 0)                                          
+                return true;            
+            else            
+                return false;            
         }
 
         private void tbRenalNum_Click(object sender, EventArgs e)
@@ -277,6 +323,7 @@ namespace WaitlistInspector
                 }
             }
         }
+       
 
     }
 }

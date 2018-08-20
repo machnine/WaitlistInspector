@@ -7,7 +7,7 @@
     <ProjectGuid>{EB471919-4647-48DE-9350-490A02DC65DA}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>WaitlistInspector</RootNamespace>
-    <AssemblyName>Waitlist Inspector</AssemblyName>
+    <AssemblyName>WaitlistInspector</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
